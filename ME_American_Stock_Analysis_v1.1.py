@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 #!/usr/bin/env python
@@ -77,7 +77,7 @@ import json
 # target_stock = ""
 msgs = []
 IS_ACTIVATE = False  # To determine whether updating message or not
-expiration_date = datetime.strptime("2024-06-17", "%Y-%m-%d")  # Change expiration date here!
+expiration_date = datetime.strptime("2924-06-17", "%Y-%m-%d")  # Change expiration date here!
 #print(expiration_date)
 # contents = tk.StringVar()
 
@@ -2280,10 +2280,10 @@ def plot_data(result, industry_type, company_name, stop_flag = None):
         fig4.grid(axis='y')
         plt.xticks(rotation=45)
         plt.xticks(x_temp, x)
-        plt.title('Competitativeness\n(' + company_name + ')', fontsize=18) if IS_ENGLISH else plt.title('競爭力\n(' + company_name + ')', fontsize=18)
+        plt.title('Competitiveness\n(' + company_name + ')', fontsize=18) if IS_ENGLISH else plt.title('競爭力\n(' + company_name + ')', fontsize=18)
         fig4.set_ylabel('%')
         #plt.show()
-        file_name = folder_name + "\\" + str(current_date) + re.sub(r'[\\\/:\*\?"<>\|\.]', '', company_name) + "_Competitativeness.png"
+        file_name = folder_name + "\\" + str(current_date) + re.sub(r'[\\\/:\*\?"<>\|\.]', '', company_name) + "_Competitiveness.png"
         plt.tight_layout()
         plt.subplots_adjust(left = 0.1, right = 0.6)
         plt.savefig(file_name)
@@ -2601,10 +2601,10 @@ def plot_data(result, industry_type, company_name, stop_flag = None):
         fig4.grid(axis='y')
         plt.xticks(rotation=45)
         plt.xticks(x_temp, x)
-        plt.title('Competitativeness\n(' + company_name + ')', fontsize=18) if IS_ENGLISH else plt.title('競爭力\n(' + company_name + ')', fontsize=18)
+        plt.title('Competitiveness\n(' + company_name + ')', fontsize=18) if IS_ENGLISH else plt.title('競爭力\n(' + company_name + ')', fontsize=18)
         fig4.set_ylabel('%')
         #plt.show()
-        file_name = folder_name + "\\" + str(current_date) + re.sub(r'[\\\/:\*\?"<>\|\.]', '', company_name) + "_Competitativeness.png"
+        file_name = folder_name + "\\" + str(current_date) + re.sub(r'[\\\/:\*\?"<>\|\.]', '', company_name) + "_Competitiveness.png"
         plt.tight_layout()
         plt.subplots_adjust(left = 0.1, right = 0.6)
         plt.savefig(file_name)
@@ -2967,7 +2967,7 @@ def change_lang():
         btn_operation.config(text = "Operating\ncircumstances", font = ("Arial", 12, "normal"), width = 16)
         btn_operation.place(x = 610, y = 230)
         btn_balance.config(text = "Liabilities and\nStockholder's equity", font = ("Arial", 12, "normal"), width = 16)        
-        btn_competitativeness.config(text = "Competitativeness", font = ("Arial", 12, "normal"), width = 16)
+        btn_competitativeness.config(text = "Competitiveness", font = ("Arial", 12, "normal"), width = 16)
         btn_competitativeness.place(x = 610, y = 300)
         btn_investment.config(text = "Investment return", font = ("Arial", 12, "normal"), width = 16)
         btn_investment.place(x = 610, y = 350)
@@ -3805,7 +3805,7 @@ btn_cashflow.place(x = 610, y = 180)
 btn_operation = tk.Button(frame_result, text = "Operating\ncircumstances", command = lambda :load_in(folder_name, company_name, "_Operating circumstances.png", 3), font = ("Arial", 12), padx = 10, pady = 5, width = 16, anchor = "w", justify = "left")
 btn_operation.place(x = 610, y = 230)
 
-btn_competitativeness = tk.Button(frame_result, text = "Competitativeness", command = lambda :load_in(folder_name, company_name, "_Competitativeness.png", 4), font = ("Arial", 12), padx = 10, pady = 5, width = 16, anchor = "w", justify = "left")
+btn_competitativeness = tk.Button(frame_result, text = "Competitiveness", command = lambda :load_in(folder_name, company_name, "_Competitiveness.png", 4), font = ("Arial", 12), padx = 10, pady = 5, width = 16, anchor = "w", justify = "left")
 btn_competitativeness.place(x = 610, y = 300)
 
 btn_investment = tk.Button(frame_result, text = "Investment return", command = lambda :load_in(folder_name, company_name, "_Investment return.png", 5), font = ("Arial", 12), padx = 10, pady = 5, width = 16, anchor = "w", justify = "left")
@@ -4022,10 +4022,10 @@ root.mainloop()
 
 # ## Convert to .py file
 
-# In[ ]:
+# In[9]:
 
 
-# get_ipython().system('jupyter nbconvert American_Stock_Analysis_For_Sale.ipynb --to python')
+# get_ipython().system('jupyter nbconvert ME_American_Stock_Analysis_v1.1.ipynb --to python')
 
 
 # In[87]:
