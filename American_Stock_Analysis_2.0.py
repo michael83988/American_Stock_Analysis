@@ -444,97 +444,7 @@ def get_source(target_stock, quarter_num, stop_flag):
                             return None
                         
                         url = browser.current_url
-                        page_init_javascript="""
-/* <![CDATA[ */
-                /* Created by staff of the U.S. Securities and Exchange Commission.
-                 * Data and content created by government employees within the scope of their employment
-                 * are not subject to domestic copyright protection. 17 U.S.C. 105.
-                 *
-                 * This script checks the accession number of the document requested to determine
-                 * the year and sequence of filing.  If filed after the availability of ixviewer-plus
-                 * this script redirects to that viewer, otherwise to a prior ixviewer in effect
-                 * or deemed compatible with the filing.
-                 */
-                function loadViewer(ixvUrl) {
-                   // load viewer in an iframe so the end user's browser URL is not changed
-                   var iFrame = document.getElementById("ixvFrame");
-                   iFrame.src = ixvUrl;
-                }
-                const url = location.href;
-                // url doc pattern is /Archives/edgar/data/ciknum/{10digits}{YY}{sequence}/{more params}
-		// uncomment one of the following urlPatterns depending on usage:
-                // for SEC.GOV: const urlPattern = /(\?doc=(\/Archives\/edgar\/data\/[0-9]+\/[0-9]{10}([0-9]{8})\/).*$)/;
-                // for Arelle GUI: const urlPattern = /(\?doc=(\/[0-9]+\/).*$)/;
-                const urlPattern = /(\?doc=(\/Archives\/edgar\/data\/[0-9]+\/[0-9]{10}([0-9]{8})\/).*$)/;
-		var ixvUrl = null;
-                if (! urlPattern.test(url)) {
-                    alert("Not an EDGAR inline XBRL document viewing request, please check URL");
-                    // this hangs: loadViewer("/ixviewer/ix.html" + ixParams);
-                } else {
-                    const match = url.match(urlPattern);
-                    const ixParams = match[1];
-                    const docPath = match[2];
-                    let xhr = new XMLHttpRequest();
-                    xhr.onreadystatechange = function() {
-                        if (this.readyState == 4) {
-                            if (this.status == 200) {
-                                const ml = JSON.parse(this.responseText);
-                                if (!(typeof ml === 'object' && "instance" in ml)) {
-                                   console.log("Metalinks does not have instance objects");
-                                   // Unable to read MetaLinks.json, use 23.2 ixviewer
-                                   loadViewer("/ixviewer/ix.html" + ixParams);
-                                } else {
-                                   const numInstances = Object.keys(ml["instance"]).length;
-                                   let maxDocsPerInst = 0;
-                                   let hasFeeExhibit = false;
-                                   Object.keys(ml["instance"]).forEach(instanceNames => {
-                                        let docsInInstance = instanceNames.split(" ").length;
-                                        if (docsInInstance > maxDocsPerInst)
-                                            maxDocsPerInst = docsInInstance;
-                                        if ("baseTaxonomies" in ml["instance"][instanceNames]) {
-                                           Object.keys(ml["instance"][instanceNames]["baseTaxonomies"])
-                                           .forEach(baseTaxonomyUrl => {
-                                               if (baseTaxonomyUrl.startsWith("http://xbrl.sec.gov/ffd/"))
-                                                   hasFeeExhibit = true;
-                                           });
-                                        }
-                                       });
-                                   if (numInstances > 1 || maxDocsPerInst > 1 || hasFeeExhibit)
-                                       loadViewer("/ixviewer-plus/ix.xhtml" + ixParams);
-                                   else
-                                       loadViewer("/ixviewer/ix.html" + ixParams);
-                                }
-                            } else {
-                                    console.log("Unable to read MetaLinks.json for this accession");
-                                    // Unable to read MetaLinks.json, use 23.2 ixviewer
-                                    loadViewer("/ixviewer/ix.html" + ixParams);
-                            }
-                        }
-                    };
-                    xhr.ontimeout = function() {
-                        console.log("Timeout reading MetaLinks.json for this accession");
-                        // Unable to read MetaLinks.json, use 23.2 ixviewer
-                        loadViewer("/ixviewer/ix.html" + ixParams);
-                    };
-                    xhr.open("GET", docPath + 'MetaLinks.json', true);
-                    xhr.timeout = 2000; // milliseconds
-                    xhr.send();
 
-                    /* alternative select viewer using accession number
-
-                    const acsnYrSeq = match[3];
-                    if (acsnYrSeq > "24905000") {
-                        loadViewer(docPath + "ixbrlviewer.xhtml");
-                    } else if (acsnYrSeq > "23905000") {
-                        loadViewer("/ixviewer-plus/ix.xhtml" + ixParams);
-                    } else {
-                        loadViewer("/ixviewer/ix.html" + ixParams);
-                    }
-
-                    */
-                }
-            /* ]]> */
-            """
                         # page.add_init_script(page_init_javascript)
                         page.goto(url)
                         page.wait_for_load_state()
@@ -548,14 +458,15 @@ def get_source(target_stock, quarter_num, stop_flag):
                         # Real Content is in iframe!
                         # page_source=page.locator('css=html').inner_html()
                         page_source_iframe=page.frame_locator('#ixvFrame')
-                        print(type(page_source_iframe))
-                        page_source_locator=page_source_iframe.locator('css=iframe')
-                        print(page_source_locator.is_visible())  #@@ ? wrong? <iframe> was expected?
-                        page_source=page_source_locator.inner_html()  # @@?
-                        page_source='<html>'+page_source+'</html>'
+                        # print(type(page_source_iframe))
+                        # page_source_locator=page_source_iframe.locator('css=iframe')
+                        # print(page_source_locator.is_visible())  #@@ ? wrong? <iframe> was expected?
+                        # page_source=page_source_locator.inner_html()  # @@?
+                        # page_source='<html>'+page_source+'</html>'
                         # print(page_source[:200])
                         # page_source_rpl=page_source.replace(r'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">','')
                         # print(page_source_rpl[:50])
+                        # page_source=browser.find_element(By.XPATH,'/html/body').get_attribute('innerHTML')
                         report = BS(page_source, "html.parser")
 
                         
