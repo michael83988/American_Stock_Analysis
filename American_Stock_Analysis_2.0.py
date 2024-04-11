@@ -417,7 +417,7 @@ def get_source(target_stock, quarter_num, stop_flag):
             # 為了取得動態網頁的html，使用playwright
             with sync_playwright() as playwright:
                 chromium=playwright.firefox
-                browser_playwright=chromium.launch(headless=False)
+                browser_playwright=chromium.launch(headless=True)
                 browser_context=browser_playwright.new_context(java_script_enabled=True)
                 browser_context.set_extra_http_headers(
                     {
@@ -430,7 +430,7 @@ def get_source(target_stock, quarter_num, stop_flag):
                     });
                 """
                 browser_context.add_init_script(script_to_run_init)
-                page=browser_context.new_page()
+                
                 # page.wait_for_load_state()
                 for window in new_windows:
                     if(window != current_window):
@@ -446,8 +446,10 @@ def get_source(target_stock, quarter_num, stop_flag):
                         url = browser.current_url
 
                         # page.add_init_script(page_init_javascript)
+                        page=browser_context.new_page()
                         page.goto(url)
-                        page.wait_for_load_state()
+                        # page.reload(wait_until='networkidle')
+                        page.wait_for_load_state('load')
                         page.wait_for_timeout(5000)
                         # test_txt=page.get_by_text('10-Q').text_content()
                         # print(test_txt)
@@ -457,8 +459,16 @@ def get_source(target_stock, quarter_num, stop_flag):
                         # page_source=page.content()  # return view-source web page -> not this one
                         # Real Content is in iframe!
                         # page_source=page.locator('css=html').inner_html()
-                        page_source_iframe=page.frame_locator('#ixvFrame')
+                        page_main_frame=page.main_frame
+                        child_frames=page_main_frame.child_frames
+                        print(f"child frame count: {len(child_frames)}")
+                        inner_iframe=child_frames[0]
+                        page_source=inner_iframe.content()
+                        page_source=page_source.replace(r'<!DOCTYPE html>','')
+                        # print(page_source)
+                        # page_source_iframe=page.frame_locator('#ixvFrame')
                         # print(type(page_source_iframe))
+                        # print(inner_iframe.get_by_text("10-Q").text_content())
                         # page_source_locator=page_source_iframe.locator('css=iframe')
                         # print(page_source_locator.is_visible())  #@@ ? wrong? <iframe> was expected?
                         # page_source=page_source_locator.inner_html()  # @@?
@@ -468,6 +478,7 @@ def get_source(target_stock, quarter_num, stop_flag):
                         # print(page_source_rpl[:50])
                         # page_source=browser.find_element(By.XPATH,'/html/body').get_attribute('innerHTML')
                         report = BS(page_source, "html.parser")
+                        page.close()
 
                         
 
@@ -567,7 +578,7 @@ def get_source(target_stock, quarter_num, stop_flag):
 
 # Check the report type (10-K or 10-Q)
 def check_report_type(soup):
-    print(str(soup)[:])
+    # print(str(soup)[:])
     #test_list = soup.find_all("ix:nonnumeric", {"id" : re.compile(r"fact-identifier-\d+")})
     #test_list = soup.find_all("ix:nonnumeric", {"name" : "dei:DocumentType"})
     # print(test)
@@ -1542,7 +1553,7 @@ def extract_from_reports(reports, industry_type, special_case = None, stop_flag 
 
 
             # Difference between 10-K and 10-Q reports
-            print(check_report_type(reports_sorted[i][0]))
+            # print(check_report_type(reports_sorted[i][0]))
             if(check_report_type(reports_sorted[i][0]) == "Q"):
 
                 # Get EPS (basic)
@@ -1813,7 +1824,7 @@ def extract_from_reports(reports, industry_type, special_case = None, stop_flag 
             # Get net cash provided by operating activities 
             # No information of cash flow in current quarter period! Only accululated value is provided! Have special case!
             # Need some calculation to get cash flow in the quarter period
-            print(check_report_type(reports_sorted[i-1][0]))
+            # print(check_report_type(reports_sorted[i-1][0]))
             if(check_report_type(reports_sorted[i - 1][0]) == "K"):
                 # First quarter
                 result_data[11][i - 1] = extract_data(table_cashflows[i][1], r"^us-gaap:NetCashProvidedByUsedInOperatingActivities", None, position_cash_flow[0])
@@ -2557,6 +2568,8 @@ def plot_data(result, industry_type, company_name, stop_flag = None):
     
     # Create a new folder of the company's name
     current_date = datetime.now().strftime("%Y-%m-%d")
+    if not os.path.exists('results'):
+        os.mkdir('results')
     folder_name = r"results\\" + str(current_date) + re.sub(r'[\\\/:\*\?"<>\|\.]', '', company_name)
     if not os.path.isdir(folder_name):
         os.mkdir(folder_name)
