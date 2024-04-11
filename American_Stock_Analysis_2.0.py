@@ -597,14 +597,16 @@ def check_report_type(soup):
 #     else:
 #         return "Drop"
 
-    if((IS_QUARTERLY and re.search("[☑☒X]",IS_QUARTERLY.string)) or (IS_TRANSITION and re.search("[☑☒X]", IS_TRANSITION.string)) or (REPORT_FORM and re.search(r"10-Q", REPORT_FORM.string))):
+    if((IS_QUARTERLY and re.search("[☑☒Xx]",IS_QUARTERLY.string)) or (IS_TRANSITION and re.search("[☑☒X]", IS_TRANSITION.string)) or (REPORT_FORM and re.search(r"10-Q", REPORT_FORM.string))):
         print('Q')
         return 'Q'
-    elif((IS_ANNUAL and re.search("[☑☒X]", IS_ANNUAL.string)) or (REPORT_FORM and re.search(r"10-K", REPORT_FORM.string))):
+    elif((IS_ANNUAL and re.search("[☑☒Xx]", IS_ANNUAL.string)) or (REPORT_FORM and re.search(r"10-K", REPORT_FORM.string))):
         print('K')
         return 'K'
     else:
         print("Drop")
+        print(f"Quarterly string: {IS_QUARTERLY.string}")
+        print(f"Annual string: {IS_ANNUAL.string}")
         return "Drop"
 
 
